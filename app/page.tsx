@@ -1,0 +1,225 @@
+'use client';
+
+import { Player, PlayerRef } from '@remotion/player';
+import { useCallback, useState, useRef, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+
+const IntroComposition = dynamic(
+  () => import('@getmoments/remotion-rendering').then((mod) => ({ default: mod.IntroComposition })),
+  { ssr: false }
+);
+
+type IntroCompositionProps = {
+  videoUrl: string;
+  transparentVideoUrl?: string;
+  logoUrl?: string;
+  logoYOffsetPx: number;
+  logoScale: number;
+  logoStartFromSec?: number;
+  logoEndAtSec?: number;
+  logoFadeInDurationSec: number;
+  logoFadeOutDurationSec: number;
+  nameShow: boolean;
+  name: string;
+  nameStartFromSec?: number;
+  nameEndAtSec?: number;
+  nameCustomTextBeforeName?: string;
+  nameYOffsetPx: number;
+  nameFontUrl?: string;
+  nameFontWeight?: string;
+  nameFontColorHex: string;
+  nameFontBgColorHex?: string;
+  nameFontSizePx: number;
+  nameLineHeightPx?: number;
+  nameUpperCase: boolean;
+  nameUseShadow: boolean;
+  nameSplitDelaySec: number;
+  nameFadeInDurationSec: number;
+  nameFadeOutDurationSec: number;
+  durationInFrames?: number;
+};
+
+export default function Home() {
+  const [playing, setPlaying] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const playerRef = useRef<PlayerRef>(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const handlePlay = useCallback(() => {
+    setPlaying(true);
+    playerRef.current?.play();
+  }, []);
+
+  const handlePause = useCallback(() => {
+    setPlaying(false);
+    playerRef.current?.pause();
+  }, []);
+
+  const handlePreviousFrame = useCallback(() => {
+    if (playerRef.current) {
+      const currentFrame = playerRef.current.getCurrentFrame();
+      playerRef.current.seekTo(Math.max(0, currentFrame - 1));
+    }
+  }, []);
+
+  const handleNextFrame = useCallback(() => {
+    if (playerRef.current) {
+      const currentFrame = playerRef.current.getCurrentFrame();
+      playerRef.current.seekTo(currentFrame + 1);
+    }
+  }, []);
+
+  const introProps: IntroCompositionProps = {
+    // videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    videoUrl: 'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/RockWerchter2025_vertical.mov',
+    logoYOffsetPx: 0,
+    logoScale: 1,
+    logoFadeInDurationSec: 1,
+    logoFadeOutDurationSec: 1,
+    nameShow: true,
+    name: 'Demo User',
+    nameYOffsetPx: -100,
+    nameFontColorHex: '#ffffff',
+    nameFontSizePx: 48,
+    nameUpperCase: false,
+    nameUseShadow: true,
+    nameSplitDelaySec: 0.1,
+    nameFadeInDurationSec: 0,
+    nameFadeOutDurationSec: 0,
+  };
+
+  return (
+    <main style={{ padding: '40px', maxWidth: '1200px', margin: '0 auto' }}>
+      <h1 style={{ fontSize: '48px', marginBottom: '16px', fontWeight: 'bold' }}>
+        Remotion Player Demo
+      </h1>
+      <p style={{ fontSize: '18px', marginBottom: '40px', opacity: 0.8 }}>
+        This Next.js app displays Remotion compositions using the Player component.
+      </p>
+
+      <div
+        style={{
+          backgroundColor: '#1e293b',
+          padding: '32px',
+          borderRadius: '12px',
+          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
+        }}
+      >
+        <h2 style={{ fontSize: '24px', marginBottom: '24px' }}>
+          IntroComposition
+        </h2>
+        
+          <div style={{ marginBottom: '20px' }}>
+            {isMounted && (
+              <Player
+                ref={playerRef}
+                component={IntroComposition}
+                inputProps={introProps}
+                durationInFrames={150}
+                compositionWidth={1080}
+                compositionHeight={1920}
+                fps={25}
+                style={{
+                  height: '80vh',
+                  maxHeight: '900px',
+                  width: 'auto',
+                  margin: '0 auto',
+                }}
+                controls
+                loop
+              />
+            )}
+          </div>
+
+        <div style={{ marginTop: '24px' }}>
+          <h3 style={{ fontSize: '18px', marginBottom: '12px' }}>
+            Player Controls
+          </h3>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <button
+              onClick={handlePlay}
+              style={{
+                padding: '12px 24px',
+                fontSize: '16px',
+                borderRadius: '8px',
+                border: 'none',
+                backgroundColor: '#10b981',
+                color: 'white',
+                cursor: 'pointer',
+                fontWeight: '500',
+              }}
+            >
+              ▶️ Play
+            </button>
+            <button
+              onClick={handlePause}
+              style={{
+                padding: '12px 24px',
+                fontSize: '16px',
+                borderRadius: '8px',
+                border: 'none',
+                backgroundColor: '#ef4444',
+                color: 'white',
+                cursor: 'pointer',
+                fontWeight: '500',
+              }}
+            >
+              ⏸️ Pause
+            </button>
+            <button
+              onClick={handlePreviousFrame}
+              style={{
+                padding: '12px 24px',
+                fontSize: '16px',
+                borderRadius: '8px',
+                border: '2px solid #3b82f6',
+                backgroundColor: 'transparent',
+                color: '#3b82f6',
+                cursor: 'pointer',
+                fontWeight: '500',
+              }}
+            >
+              ⬅️ Previous Frame
+            </button>
+            <button
+              onClick={handleNextFrame}
+              style={{
+                padding: '12px 24px',
+                fontSize: '16px',
+                borderRadius: '8px',
+                border: '2px solid #3b82f6',
+                backgroundColor: 'transparent',
+                color: '#3b82f6',
+                cursor: 'pointer',
+                fontWeight: '500',
+              }}
+            >
+              Next Frame ➡️
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        style={{
+          marginTop: '40px',
+          padding: '24px',
+          backgroundColor: '#334155',
+          borderRadius: '8px',
+        }}
+      >
+        <h3 style={{ fontSize: '20px', marginBottom: '12px' }}>
+          ✅ Success!
+        </h3>
+        <p style={{ lineHeight: '1.8', opacity: 0.9 }}>
+          Your IntroComposition is now loaded from the @getmoments/remotion-rendering repository
+          and displaying in the Remotion Player. You can add more compositions by
+          importing them from &apos;@getmoments/remotion-rendering&apos; and adding more Player components.
+        </p>
+      </div>
+    </main>
+  );
+}
