@@ -2,19 +2,7 @@
 
 A Next.js application that displays Remotion video compositions using the Remotion Player component. This project imports compositions from a separate Git repository (`@getmoments/remotion-rendering`).
 
-## 💡 Recommended: GitLab Package Registry
-
-**Better approach available!** Instead of git installation, we recommend using GitLab Package Registry for:
-- ✅ No credentials in package.json
-- ✅ Standard `npm install` workflow  
-- ✅ Proper versioning (1.0.0, 1.1.0, etc.)
-- ✅ Easier team collaboration
-
-**See [GITLAB_PACKAGE_SETUP.md](./GITLAB_PACKAGE_SETUP.md) for the complete guide.**
-
----
-
-## 🚀 Quick Start (Current Git-based Method)
+## 🚀 Quick Start
 
 ### 1. Install Dependencies
 
@@ -22,31 +10,22 @@ A Next.js application that displays Remotion video compositions using the Remoti
 npm install
 ```
 
-### 2. Set Up Environment Variables
+### 2. Configure npm Registry
 
-Create a `.env` file in the project root:
+Create `.npmrc` in the project root:
 
-```bash
-GITLAB_TOKEN=your-username:your-token
+```ini
+@getmoments:registry=https://git.ximilar.com/api/v4/packages/npm/
+//git.ximilar.com/api/v4/packages/npm/:_authToken=${GITLAB_TOKEN}
 ```
 
-### 3. Install Remotion Compositions
-
-**Important:** The `@getmoments/remotion-rendering` package is NOT in package.json to avoid committing credentials. Install it manually:
+### 3. Install Dependencies
 
 ```bash
-# Make GITLAB_TOKEN available to npm
-export $(cat .env | grep -v '^#' | xargs)
-
-# Install the package (--no-save prevents adding to package.json)
-npm install --no-save git+https://${GITLAB_TOKEN}@git.ximilar.com/getmoments/video/remotion-rendering.git#exports
+npm install
 ```
 
-Or use the update script (recommended):
-
-```bash
-./update-remotion.sh
-```
+This will install all packages including `@getmoments/remotion-rendering` from the GitLab Package Registry.
 
 ### 4. Run Development Server
 
@@ -54,20 +33,23 @@ Or use the update script (recommended):
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the app.
-
-> **Note:** You'll need to run step 3 after cloning the repo, as `@getmoments/remotion-rendering` won't be automatically installed.
+Open [http://localhost:3000](http://localhost:3000)
 
 ## 📦 How It Works
 
-This project uses **Git Repository Installation** to import Remotion compositions:
+This project uses **GitLab Package Registry** to import Remotion compositions:
 
-1. **Remotion Repository** (`remotion-rendering`) contains your video compositions
-2. **This Next.js App** imports and displays them using `@remotion/player`
-3. **Git-based installation** keeps the repos separate but connected
-4. **Manual installation** prevents credentials from being committed to git
+1. **Remotion Repository** publishes to GitLab Package Registry with semantic versioning
+2. **This Next.js App** imports the package via npm like any other dependency
+3. **Authentication** uses `.npmrc` with GitLab token (gitignored, not committed)
+4. **Standard npm workflow** - just `npm install` works
 
-> **Why not in package.json?** To avoid committing GitLab credentials, `@getmoments/remotion-rendering` must be installed manually using the `./update-remotion.sh` script or npm install command with environment variables.
+### Benefits
+
+- ✅ **No credentials in package.json** - Only in `.npmrc` (gitignored)
+- ✅ **Semantic versioning** - Proper version management (1.0.0, 1.1.0, etc.)
+- ✅ **Standard npm commands** - `npm install`, `npm update` work normally
+- ✅ **Team friendly** - Simple setup for new developers
 
 ### Architecture
 
@@ -126,28 +108,33 @@ export default function MyPage() {
 
 ## 🔄 Updating Compositions
 
-When you make changes to your Remotion compositions:
+### When a New Version is Published
 
-### Option 1: Use Update Script
-
-```bash
-./update-remotion.sh
-```
-
-This script:
-1. Loads your `.env` file
-2. Clears npm cache
-3. Reinstalls the latest from git
-4. Clears Next.js cache
-
-### Option 2: Manual Update
+After your Remotion repository publishes a new version to GitLab Package Registry:
 
 ```bash
-npm cache clean --force
-npm uninstall @getmoments/remotion-rendering
-npm install git+https://${GITLAB_TOKEN}@git.ximilar.com/getmoments/video/remotion-rendering.git#exports
+# Export token
+export $(cat .env | grep -v '^#' | xargs)
+
+# Update to latest version
+npm update @getmoments/remotion-rendering
+
+# Or update to a specific version
+npm install @getmoments/remotion-rendering@1.2.0
+
+# Clear Next.js cache
 rm -rf .next
+
+# Run dev server
+npm run dev
 ```
+
+### Version Management
+
+The package uses semantic versioning:
+- **Patch** (1.0.0 → 1.0.1): Bug fixes
+- **Minor** (1.0.0 → 1.1.0): New features, backward compatible  
+- **Major** (1.0.0 → 2.0.0): Breaking changes
 
 ## 📋 Project Structure
 
@@ -242,32 +229,36 @@ const MyComp = dynamic(
 }
 ```
 
-### Composition Not Updating
+### Composition Not Updating After Package Update
 
-**Solution**: Clear caches and reinstall:
+**Solution**: Clear Next.js cache and reinstall:
 
 ```bash
-./update-remotion.sh
+rm -rf .next node_modules
+npm install
 ```
 
 ### Cannot Find Module '@getmoments/remotion-rendering'
 
-**Solution**: The package needs to be installed manually (it's not in package.json):
+**Solution**: Check authentication and installation:
 
 ```bash
-./update-remotion.sh
-```
-
-Or manually:
-```bash
+# Verify token is set
 export $(cat .env | grep -v '^#' | xargs)
-npm install git+https://${GITLAB_TOKEN}@git.ximilar.com/getmoments/video/remotion-rendering.git#exports
+echo $GITLAB_TOKEN  # Should show your token
+
+# Install the package
+npm install
+
+# Verify installation
+npm list @getmoments/remotion-rendering
 ```
 
 Check that:
 1. `.env` file has correct `GITLAB_TOKEN`
-2. Package is installed: `npm list @getmoments/remotion-rendering`
-3. Path mapping in `tsconfig.json` is correct
+2. `.npmrc` is configured for GitLab registry
+3. Your GitLab token has `read_api` or `api` scope
+4. Package is in `package.json` dependencies
 
 ## 📚 Available Compositions
 
@@ -286,8 +277,9 @@ import { OverlayComposition } from '@getmoments/remotion-rendering';
 ## 🔐 Security
 
 - ✅ `.env` file is in `.gitignore` - credentials never committed
-- ✅ Use `${GITLAB_TOKEN}` in package.json instead of hardcoded credentials
-- ✅ For production, use environment variables in your deployment platform
+- ✅ `.npmrc` is in `.gitignore` - registry auth never committed
+- ✅ Token only in environment variables, never in code
+- ✅ For production, set `GITLAB_TOKEN` in your deployment platform's environment variables
 
 ## 🚢 Deployment
 
@@ -359,11 +351,22 @@ const [videoUrl, setVideoUrl] = useState('...');
 
 ## 📝 Development Workflow
 
-1. Make changes in `remotion-rendering` repo
-2. Commit and push to the `exports` branch
-3. Run `./update-remotion.sh` in this project
-4. Test with `npm run dev`
-5. Deploy when ready
+### In Remotion Repository
+
+1. Make changes to compositions
+2. Update version: `npm version patch` (or `minor`/`major`)
+3. Commit and push: `git push origin main --tags`
+4. Publish to registry: `npm publish`
+
+### In This Next.js Project
+
+1. Update package: `npm update @getmoments/remotion-rendering`
+2. Test with `npm run dev`
+3. Commit and deploy when ready
+
+### Automated Publishing (Optional)
+
+Set up GitLab CI in your Remotion repo to auto-publish on tags - see your Package Registry documentation for details.
 
 ---
 
