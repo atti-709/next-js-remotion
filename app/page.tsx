@@ -2,12 +2,7 @@
 
 import { Player, PlayerRef } from '@remotion/player';
 import { useCallback, useState, useRef, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-
-const IntroComposition = dynamic(
-  () => import('@getmoments/remotion-rendering').then((mod) => ({ default: mod.IntroComposition })),
-  { ssr: false }
-);
+import { IntroComposition } from '@getmoments/remotion-rendering';
 
 type IntroCompositionProps = {
   videoUrl: string;

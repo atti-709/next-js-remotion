@@ -70,13 +70,7 @@ remotion-rendering (Git Repo)           next-js-remotion (This Project)
 'use client';
 
 import { Player } from '@remotion/player';
-import dynamic from 'next/dynamic';
-
-// Dynamic import to avoid SSR issues
-const IntroComposition = dynamic(
-  () => import('@getmoments/remotion-rendering').then((mod) => ({ default: mod.IntroComposition })),
-  { ssr: false }
-);
+import { IntroComposition } from '@getmoments/remotion-rendering';
 
 export default function MyPage() {
   const props = {
@@ -103,8 +97,7 @@ export default function MyPage() {
 ### Key Points
 
 - ✅ Use `'use client'` directive (Player is client-side only)
-- ✅ Use `dynamic()` import with `{ ssr: false }` to prevent SSR errors
-- ✅ Wrap Player in `{isMounted &&` for hydration safety (optional but recommended)
+- ✅ Import compositions directly from the package
 
 ## 🔄 Updating Compositions
 
@@ -202,17 +195,6 @@ Common Player configuration options:
 For vertical video (portrait): Use `compositionWidth={1080}` and `compositionHeight={1920}`
 
 ## 🐛 Troubleshooting
-
-### "measureText() can only be called in a browser"
-
-**Solution**: Use dynamic import with SSR disabled:
-
-```typescript
-const MyComp = dynamic(
-  () => import('@getmoments/remotion-rendering').then(m => ({ default: m.MyComp })),
-  { ssr: false }
-);
-```
 
 ### "Multiple versions of Remotion detected"
 
