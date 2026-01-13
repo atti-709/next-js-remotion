@@ -3,36 +3,7 @@
 import { Player, PlayerRef } from '@remotion/player';
 import { useCallback, useState, useRef, useEffect } from 'react';
 import { IntroComposition } from '@getmoments/remotion-rendering';
-
-type IntroCompositionProps = {
-  videoUrl: string;
-  transparentVideoUrl?: string;
-  logoUrl?: string;
-  logoYOffsetPx: number;
-  logoScale: number;
-  logoStartFromSec?: number;
-  logoEndAtSec?: number;
-  logoFadeInDurationSec: number;
-  logoFadeOutDurationSec: number;
-  nameShow: boolean;
-  name: string;
-  nameStartFromSec?: number;
-  nameEndAtSec?: number;
-  nameCustomTextBeforeName?: string;
-  nameYOffsetPx: number;
-  nameFontUrl?: string;
-  nameFontWeight?: string;
-  nameFontColorHex: string;
-  nameFontBgColorHex?: string;
-  nameFontSizePx: number;
-  nameLineHeightPx?: number;
-  nameUpperCase: boolean;
-  nameUseShadow: boolean;
-  nameSplitDelaySec: number;
-  nameFadeInDurationSec: number;
-  nameFadeOutDurationSec: number;
-  durationInFrames?: number;
-};
+import { IntroCompositionProps } from '@getmoments/remotion-rendering/compositions/intro/IntroComposition';
 
 export default function Home() {
   const [playing, setPlaying] = useState(false);
