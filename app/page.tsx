@@ -41,6 +41,8 @@ export default function Home() {
   const introProps: IntroCompositionProps = {
     // videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     videoUrl: 'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/RockWerchter2025_vertical.mov',
+    transparentVideoUrl:
+						'https://s3.eu-central-1.wasabisys.com/getmoments-static/events/sziget/2025/intro/intro.webm',
     logoYOffsetPx: 0,
     logoScale: 1,
     logoFadeInDurationSec: 1,
