@@ -19,56 +19,56 @@ export default function Home() {
 
   const previewProps: any = {
     // Shared video URL
-    videoUrl:
-    'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/RockWerchter2025_vertical.mov',
-  videoStartFrame: 0,
+    // videoUrl: "https://remotion.media/video.mp4",
+    videoUrl: 'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/RockWerchter2025_vertical.mov',
+    videoStartFrame: 0,
 
-  // INTRO props
-  logoYOffsetPx: 0,
-  logoScale: 1,
-  logoStartFromSec: 1.0,
-  logoEndAtSec: 5.0,
-  logoFadeInDurationSec: 0,
-  logoFadeOutDurationSec: 0,
+    // INTRO props
+    logoYOffsetPx: 0,
+    logoScale: 1,
+    logoStartFromSec: 1.0,
+    logoEndAtSec: 5.0,
+    logoFadeInDurationSec: 0,
+    logoFadeOutDurationSec: 0,
 
-  nameShow: true,
-  name: 'Alex Johnson',
-  nameYOffsetPx: sharedConstants.NAME_Y_OFFSET_PX,
-  nameCustomTextBeforeName: 'by',
-  nameStartFromSec: 1.7,
-  nameEndAtSec: 5,
-  nameLineHeightPx: undefined,
+    nameShow: true,
+    name: 'Alex Johnson',
+    nameYOffsetPx: sharedConstants.NAME_Y_OFFSET_PX,
+    nameCustomTextBeforeName: 'by',
+    nameStartFromSec: 1.7,
+    nameEndAtSec: 5,
+    nameLineHeightPx: undefined,
 
-  nameFontUrl: sharedConstants.NAME_FONT_URL,
-  nameFontWeight: sharedConstants.NAME_FONT_WEIGHT,
-  nameFontColorHex: sharedConstants.NAME_FONT_COLOR_HEX,
-  nameFontBgColorHex: '#000000',
-  nameFontSizePx: sharedConstants.NAME_FONT_SIZE_PX,
-  nameUpperCase: sharedConstants.NAME_UPPER_CASE,
-  nameUseShadow: true,
+    nameFontUrl: sharedConstants.NAME_FONT_URL,
+    nameFontWeight: sharedConstants.NAME_FONT_WEIGHT,
+    nameFontColorHex: sharedConstants.NAME_FONT_COLOR_HEX,
+    nameFontBgColorHex: '#000000',
+    nameFontSizePx: sharedConstants.NAME_FONT_SIZE_PX,
+    nameUpperCase: sharedConstants.NAME_UPPER_CASE,
+    nameUseShadow: true,
 
-  nameSplitDelaySec: 0,
-  nameFadeInDurationSec: 0.1,
-  nameFadeOutDurationSec: 0.1,
+    nameSplitDelaySec: 0,
+    nameFadeInDurationSec: 0.1,
+    nameFadeOutDurationSec: 0.1,
 
-  // OVERLAY props
-  overlayOnlyForUgc: true,
-  overlayStartFrame: 0,
-  overlayImageUrl:
-    'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/rev-calling-watermark.png',
-  overlayImagePosition:
-    sharedConstants.OVERLAY_IMAGE_POSITION as OverlayPosition,
-  overlayImageScale: 1.0,
-  overlayImageOpacity: sharedConstants.OVERLAY_IMAGE_OPACITY,
-  overlayText: 'Atti',
-  overlayFontUrl: sharedConstants.OVERLAY_FONT_URL,
-  overlayFontWeight: sharedConstants.OVERLAY_FONT_WEIGHT,
-  overlayFontSizePx: sharedConstants.OVERLAY_FONT_SIZE_PX,
-  overlayFontColorHex: sharedConstants.OVERLAY_FONT_COLOR_HEX,
-  overlayTextPosition:
-    sharedConstants.OVERLAY_TEXT_POSITION as OverlayPosition,
-  overlayTextPaddingPx: sharedConstants.OVERLAY_TEXT_PADDING_PX,
-  overlayTextOpacity: sharedConstants.OVERLAY_TEXT_OPACITY,
+    // OVERLAY props
+    overlayOnlyForUgc: true,
+    overlayStartFrame: 0,
+    overlayImageUrl:
+      'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/rev-calling-watermark.png',
+    overlayImagePosition:
+      sharedConstants.OVERLAY_IMAGE_POSITION as OverlayPosition,
+    overlayImageScale: 1.0,
+    overlayImageOpacity: sharedConstants.OVERLAY_IMAGE_OPACITY,
+    overlayText: 'Atti',
+    overlayFontUrl: sharedConstants.OVERLAY_FONT_URL,
+    overlayFontWeight: sharedConstants.OVERLAY_FONT_WEIGHT,
+    overlayFontSizePx: sharedConstants.OVERLAY_FONT_SIZE_PX,
+    overlayFontColorHex: sharedConstants.OVERLAY_FONT_COLOR_HEX,
+    overlayTextPosition:
+      sharedConstants.OVERLAY_TEXT_POSITION as OverlayPosition,
+    overlayTextPaddingPx: sharedConstants.OVERLAY_TEXT_PADDING_PX,
+    overlayTextOpacity: sharedConstants.OVERLAY_TEXT_OPACITY,
   };
 
   useEffect(() => {
@@ -104,7 +104,7 @@ export default function Home() {
           
           // Check if FPS is 25
           if (Math.abs(fps - 25) > 0.1) {
-            setFpsError(`Video FPS is ${fps.toFixed(2)}, expected 25 FPS`);
+            setFpsError(`Video FPS is ${fps.toFixed(2)}. Only 25 FPS is supported.`);
           } else {
             setFpsError(null);
           }
