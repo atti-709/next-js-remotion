@@ -15,6 +15,7 @@
     "@remotion/motion-blur": "4.0.404",
     "@remotion/player": "4.0.404",
     "@remotion/transitions": "4.0.404",
+    "mediabunny": "^1.28.0",
     "next": "^14.2.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",

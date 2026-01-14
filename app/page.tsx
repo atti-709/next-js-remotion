@@ -2,15 +2,136 @@
 
 import { Player, PlayerRef } from '@remotion/player';
 import { useCallback, useState, useRef, useEffect } from 'react';
-import { PreviewComposition } from '@getmoments/remotion-rendering';
+import { OverlayPosition, PreviewComposition, sharedConstants } from '@getmoments/remotion-rendering';
+import { Input, ALL_FORMATS, BlobSource } from 'mediabunny';
 
 export default function Home() {
   const [playing, setPlaying] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [videoMetadata, setVideoMetadata] = useState<{
+    durationInFrames: number;
+    width: number;
+    height: number;
+    fps: number;
+  } | null>(null);
+  const [fpsError, setFpsError] = useState<string | null>(null);
   const playerRef = useRef<PlayerRef>(null);
+
+  const previewProps: any = {
+    // Shared video URL
+    videoUrl:
+    'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/RockWerchter2025_vertical.mov',
+  videoStartFrame: 0,
+
+  // INTRO props
+  logoYOffsetPx: 0,
+  logoScale: 1,
+  logoStartFromSec: 1.0,
+  logoEndAtSec: 5.0,
+  logoFadeInDurationSec: 0,
+  logoFadeOutDurationSec: 0,
+
+  nameShow: true,
+  name: 'Alex Johnson',
+  nameYOffsetPx: sharedConstants.NAME_Y_OFFSET_PX,
+  nameCustomTextBeforeName: 'by',
+  nameStartFromSec: 1.7,
+  nameEndAtSec: 5,
+  nameLineHeightPx: undefined,
+
+  nameFontUrl: sharedConstants.NAME_FONT_URL,
+  nameFontWeight: sharedConstants.NAME_FONT_WEIGHT,
+  nameFontColorHex: sharedConstants.NAME_FONT_COLOR_HEX,
+  nameFontBgColorHex: '#000000',
+  nameFontSizePx: sharedConstants.NAME_FONT_SIZE_PX,
+  nameUpperCase: sharedConstants.NAME_UPPER_CASE,
+  nameUseShadow: true,
+
+  nameSplitDelaySec: 0,
+  nameFadeInDurationSec: 0.1,
+  nameFadeOutDurationSec: 0.1,
+
+  // OVERLAY props
+  overlayOnlyForUgc: true,
+  overlayStartFrame: 0,
+  overlayImageUrl:
+    'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/rev-calling-watermark.png',
+  overlayImagePosition:
+    sharedConstants.OVERLAY_IMAGE_POSITION as OverlayPosition,
+  overlayImageScale: 1.0,
+  overlayImageOpacity: sharedConstants.OVERLAY_IMAGE_OPACITY,
+  overlayText: 'Atti',
+  overlayFontUrl: sharedConstants.OVERLAY_FONT_URL,
+  overlayFontWeight: sharedConstants.OVERLAY_FONT_WEIGHT,
+  overlayFontSizePx: sharedConstants.OVERLAY_FONT_SIZE_PX,
+  overlayFontColorHex: sharedConstants.OVERLAY_FONT_COLOR_HEX,
+  overlayTextPosition:
+    sharedConstants.OVERLAY_TEXT_POSITION as OverlayPosition,
+  overlayTextPaddingPx: sharedConstants.OVERLAY_TEXT_PADDING_PX,
+  overlayTextOpacity: sharedConstants.OVERLAY_TEXT_OPACITY,
+  };
 
   useEffect(() => {
     setIsMounted(true);
+
+    // Fetch video metadata using mediabunny
+    const fetchVideoMetadata = async () => {
+      try {
+        const response = await fetch(previewProps.videoUrl);
+        const blob = await response.blob();
+
+        const input = new Input({
+          source: new BlobSource(blob),
+          formats: ALL_FORMATS,
+        });
+
+        const durationInSeconds = await input.computeDuration();
+        const videoTrack = await input.getPrimaryVideoTrack();
+        
+        if (durationInSeconds && videoTrack) {
+          const { displayWidth, displayHeight } = videoTrack;
+          
+          // Derive FPS from packet stats
+          const packetStats = await videoTrack.computePacketStats(50);
+          const fps = packetStats?.averagePacketRate ?? null;
+          
+          console.log('Video metadata:', { displayWidth, displayHeight, fps, durationInSeconds });
+          
+          if (fps === null) {
+            setFpsError('Unable to determine FPS from video');
+            return;
+          }
+          
+          // Check if FPS is 25
+          if (Math.abs(fps - 25) > 0.1) {
+            setFpsError(`Video FPS is ${fps.toFixed(2)}, expected 25 FPS`);
+          } else {
+            setFpsError(null);
+          }
+          
+          const durationInFrames = Math.round(durationInSeconds * fps);
+          
+          setVideoMetadata({
+            durationInFrames,
+            width: displayWidth,
+            height: displayHeight,
+            fps: Math.round(fps),
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching video metadata:', error);
+        setFpsError(`Error loading video metadata: ${error}`);
+        // Fallback to default values
+        setVideoMetadata({
+          durationInFrames: 150,
+          width: 1080,
+          height: 1920,
+          fps: 25,
+        });
+      }
+    };
+
+    fetchVideoMetadata();
   }, []);
 
   const handlePlay = useCallback(() => {
@@ -37,36 +158,6 @@ export default function Home() {
     }
   }, []);
 
-  const previewProps: any = {
-    // Video props
-    videoUrl: 'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/RockWerchter2025_vertical.mov',
-    transparentVideoUrl: 'https://s3.eu-central-1.wasabisys.com/getmoments-static/events/sziget/2025/intro/intro.webm',
-    
-    // Logo props
-    logoYOffsetPx: 0,
-    logoScale: 1,
-    logoFadeInDurationSec: 1,
-    logoFadeOutDurationSec: 1,
-    
-    // Name props
-    nameShow: true,
-    name: 'Demo User',
-    nameYOffsetPx: -100,
-    nameFontColorHex: '#ffffff',
-    nameFontSizePx: 48,
-    nameUpperCase: false,
-    nameUseShadow: true,
-    nameSplitDelaySec: 0.1,
-    nameFadeInDurationSec: 0,
-    nameFadeOutDurationSec: 0,
-    
-    // Overlay props
-    overlayUrl: 'https://s3.eu-central-1.wasabisys.com/getmoments-static/events/sziget/2025/intro/intro.webm',
-    overlayYOffsetPx: 0,
-    overlayScale: 1,
-    overlayOnlyForUgc: false,
-  };
-
   return (
     <main style={{ padding: '40px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ fontSize: '48px', marginBottom: '16px', fontWeight: 'bold' }}>
@@ -88,16 +179,30 @@ export default function Home() {
           PreviewComposition
         </h2>
         
+        {fpsError && (
+          <div style={{
+            padding: '16px',
+            marginBottom: '20px',
+            backgroundColor: '#dc2626',
+            color: 'white',
+            borderRadius: '8px',
+            fontSize: '16px',
+            fontWeight: '500',
+          }}>
+            ⚠️ {fpsError}
+          </div>
+        )}
+        
           <div style={{ marginBottom: '20px' }}>
-            {isMounted && (
+            {isMounted && videoMetadata ? (
               <Player
                 ref={playerRef}
                 component={PreviewComposition}
                 inputProps={previewProps}
-                durationInFrames={150}
-                compositionWidth={1080}
-                compositionHeight={1920}
-                fps={25}
+                durationInFrames={videoMetadata.durationInFrames}
+                compositionWidth={videoMetadata.width}
+                compositionHeight={videoMetadata.height}
+                fps={videoMetadata.fps}
                 style={{
                   height: '80vh',
                   maxHeight: '900px',
@@ -107,6 +212,14 @@ export default function Home() {
                 controls
                 loop
               />
+            ) : (
+              <div style={{ 
+                padding: '40px', 
+                textAlign: 'center',
+                opacity: 0.7 
+              }}>
+                Loading video metadata...
+              </div>
             )}
           </div>
 
