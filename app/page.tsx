@@ -2,7 +2,7 @@
 
 import { Player, PlayerRef } from '@remotion/player';
 import { useCallback, useState, useRef, useEffect } from 'react';
-import { OverlayPosition, PreviewComposition, sharedConstants } from '@getmoments/remotion-rendering';
+import { DEFAULT_FPS, DEFAULT_IS_HORIZONTAL, defaultResolution, IntroComposition, OverlayPosition, PreviewComposition, sharedConstants } from '@getmoments/remotion-rendering';
 import { Input, ALL_FORMATS, BlobSource } from 'mediabunny';
 
 export default function Home() {
@@ -22,6 +22,7 @@ export default function Home() {
     // videoUrl: "https://remotion.media/video.mp4",
     videoUrl: 'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/RockWerchter2025_vertical.mov',
     videoStartFrame: 0,
+    transparentVideoUrl: 'https://s3.eu-central-1.wasabisys.com/getmoments-static/events/sziget/2025/intro/intro.webm',
 
     // INTRO props
     logoYOffsetPx: 0,
@@ -52,7 +53,7 @@ export default function Home() {
     nameFadeOutDurationSec: 0.1,
 
     // OVERLAY props
-    overlayOnlyForUgc: true,
+    overlayOnlyForUgc: false,
     overlayStartFrame: 0,
     overlayImageUrl:
       'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/rev-calling-watermark.png',
@@ -102,9 +103,9 @@ export default function Home() {
             return;
           }
           
-          // Check if FPS is 25
-          if (Math.abs(fps - 25) > 0.1) {
-            setFpsError(`Video FPS is ${fps.toFixed(2)}. Only 25 FPS is supported.`);
+          // Check if FPS is DEFAULT_FPS
+          if (Math.abs(fps - DEFAULT_FPS) > 0.1) {
+            setFpsError(`Video FPS is ${fps.toFixed(2)}. Only ${DEFAULT_FPS} FPS is supported.`);
           } else {
             setFpsError(null);
           }
@@ -124,9 +125,9 @@ export default function Home() {
         // Fallback to default values
         setVideoMetadata({
           durationInFrames: 150,
-          width: 1080,
-          height: 1920,
-          fps: 25,
+          width: defaultResolution(DEFAULT_IS_HORIZONTAL).width,
+          height: defaultResolution(DEFAULT_IS_HORIZONTAL).height,
+          fps: DEFAULT_FPS,
         });
       }
     };
@@ -197,8 +198,11 @@ export default function Home() {
             {isMounted && videoMetadata ? (
               <Player
                 ref={playerRef}
-                component={PreviewComposition}
-                inputProps={previewProps}
+                // component={PreviewComposition}
+                component={IntroComposition}
+                inputProps={{
+                  videoUrl: previewProps.videoUrl,
+                }}
                 durationInFrames={videoMetadata.durationInFrames}
                 compositionWidth={videoMetadata.width}
                 compositionHeight={videoMetadata.height}
