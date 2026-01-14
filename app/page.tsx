@@ -198,11 +198,8 @@ export default function Home() {
             {isMounted && videoMetadata ? (
               <Player
                 ref={playerRef}
-                // component={PreviewComposition}
-                component={IntroComposition}
-                inputProps={{
-                  videoUrl: previewProps.videoUrl,
-                }}
+                component={PreviewComposition}
+                inputProps={previewProps}
                 durationInFrames={videoMetadata.durationInFrames}
                 compositionWidth={videoMetadata.width}
                 compositionHeight={videoMetadata.height}
