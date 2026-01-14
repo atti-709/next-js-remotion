@@ -2,8 +2,7 @@
 
 import { Player, PlayerRef } from '@remotion/player';
 import { useCallback, useState, useRef, useEffect } from 'react';
-import { IntroComposition } from '@getmoments/remotion-rendering';
-import { IntroCompositionProps } from '@getmoments/remotion-rendering/compositions/intro/IntroComposition';
+import { PreviewComposition } from '@getmoments/remotion-rendering';
 
 export default function Home() {
   const [playing, setPlaying] = useState(false);
@@ -38,15 +37,18 @@ export default function Home() {
     }
   }, []);
 
-  const introProps: IntroCompositionProps = {
-    // videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+  const previewProps: any = {
+    // Video props
     videoUrl: 'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/RockWerchter2025_vertical.mov',
-    transparentVideoUrl:
-						'https://s3.eu-central-1.wasabisys.com/getmoments-static/events/sziget/2025/intro/intro.webm',
+    transparentVideoUrl: 'https://s3.eu-central-1.wasabisys.com/getmoments-static/events/sziget/2025/intro/intro.webm',
+    
+    // Logo props
     logoYOffsetPx: 0,
     logoScale: 1,
     logoFadeInDurationSec: 1,
     logoFadeOutDurationSec: 1,
+    
+    // Name props
     nameShow: true,
     name: 'Demo User',
     nameYOffsetPx: -100,
@@ -57,6 +59,12 @@ export default function Home() {
     nameSplitDelaySec: 0.1,
     nameFadeInDurationSec: 0,
     nameFadeOutDurationSec: 0,
+    
+    // Overlay props
+    overlayUrl: 'https://s3.eu-central-1.wasabisys.com/getmoments-static/events/sziget/2025/intro/intro.webm',
+    overlayYOffsetPx: 0,
+    overlayScale: 1,
+    overlayOnlyForUgc: false,
   };
 
   return (
@@ -77,15 +85,15 @@ export default function Home() {
         }}
       >
         <h2 style={{ fontSize: '24px', marginBottom: '24px' }}>
-          IntroComposition
+          PreviewComposition
         </h2>
         
           <div style={{ marginBottom: '20px' }}>
             {isMounted && (
               <Player
                 ref={playerRef}
-                component={IntroComposition}
-                inputProps={introProps}
+                component={PreviewComposition}
+                inputProps={previewProps}
                 durationInFrames={150}
                 compositionWidth={1080}
                 compositionHeight={1920}
@@ -183,7 +191,7 @@ export default function Home() {
           ✅ Success!
         </h3>
         <p style={{ lineHeight: '1.8', opacity: 0.9 }}>
-          Your IntroComposition is now loaded from the @getmoments/remotion-rendering repository
+          Your PreviewComposition is now loaded from the @getmoments/remotion-rendering repository
           and displaying in the Remotion Player. You can add more compositions by
           importing them from &apos;@getmoments/remotion-rendering&apos; and adding more Player components.
         </p>

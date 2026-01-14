@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@getmoments/remotion-rendering": "latest",
+    "@getmoments/remotion-rendering": "^1.0.2-dev.6035c984",
     "@remotion/fonts": "4.0.404",
     "@remotion/layout-utils": "4.0.404",
     "@remotion/motion-blur": "4.0.404",
