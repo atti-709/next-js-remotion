@@ -6,8 +6,6 @@ import {
   DEFAULT_FPS,
   DEFAULT_IS_HORIZONTAL,
   defaultResolution,
-  IntroComposition,
-  OverlayPosition,
   PhoneComposition,
   PreviewComposition,
   sharedConstants,
@@ -26,6 +24,8 @@ export default function Home() {
   } | null>(null);
   const [fpsError, setFpsError] = useState<string | null>(null);
   const playerRef = useRef<PlayerRef>(null);
+  const previewVideoUrl =
+    'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/RockWerchter2025_vertical.mov';
   const [phoneProps, setPhoneProps] = useState({
     name: 'Scream Challenge',
     eventStartDateTime: '2026-07-01T10:00:00.000Z',
@@ -36,10 +36,7 @@ export default function Home() {
   });
 
   const previewProps: any = {
-    // Shared video URL
-    // videoUrl: "https://remotion.media/video.mp4",
-    videoUrl:
-      'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/RockWerchter2025_vertical.mov',
+    videoUrl: previewVideoUrl,
     videoStartFrame: 0,
     transparentVideoUrl:
       'https://s3.eu-central-1.wasabisys.com/getmoments-static/events/sziget/2025/intro/intro.webm',
@@ -77,7 +74,7 @@ export default function Home() {
     overlayStartFrame: 0,
     overlayImageUrl:
       'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/rev-calling-watermark.png',
-    overlayImagePosition: sharedConstants.OVERLAY_IMAGE_POSITION as OverlayPosition,
+    overlayImagePosition: sharedConstants.OVERLAY_IMAGE_POSITION,
     overlayImageScale: 1.0,
     overlayImageOpacity: sharedConstants.OVERLAY_IMAGE_OPACITY,
     overlayText: 'Atti',
@@ -85,7 +82,7 @@ export default function Home() {
     overlayFontWeight: sharedConstants.OVERLAY_FONT_WEIGHT,
     overlayFontSizePx: sharedConstants.OVERLAY_FONT_SIZE_PX,
     overlayFontColorHex: sharedConstants.OVERLAY_FONT_COLOR_HEX,
-    overlayTextPosition: sharedConstants.OVERLAY_TEXT_POSITION as OverlayPosition,
+    overlayTextPosition: sharedConstants.OVERLAY_TEXT_POSITION,
     overlayTextPaddingPx: sharedConstants.OVERLAY_TEXT_PADDING_PX,
     overlayTextOpacity: sharedConstants.OVERLAY_TEXT_OPACITY,
   };
@@ -96,7 +93,7 @@ export default function Home() {
     // Fetch video metadata using mediabunny
     const fetchVideoMetadata = async () => {
       try {
-        const response = await fetch(previewProps.videoUrl);
+        const response = await fetch(previewVideoUrl);
         const blob = await response.blob();
 
         const input = new Input({
@@ -151,7 +148,57 @@ export default function Home() {
     };
 
     fetchVideoMetadata();
-  }, []);
+  }, [previewVideoUrl]);
+
+  const tabButtonBaseStyle = {
+    padding: '10px 16px',
+    fontSize: '14px',
+    borderRadius: '8px',
+    border: '1px solid #475569',
+    color: 'white',
+    cursor: 'pointer',
+    fontWeight: '600',
+  } as const;
+
+  const inputLabelStyle = {
+    display: 'grid',
+    gap: '6px',
+    fontSize: '14px',
+    color: '#cbd5e1',
+  } as const;
+
+  const inputStyle = {
+    width: '100%',
+    padding: '10px 12px',
+    borderRadius: '6px',
+    border: '1px solid #475569',
+    backgroundColor: '#1e293b',
+    color: 'white',
+  } as const;
+
+  const playerStyle = {
+    height: '80vh',
+    maxHeight: '900px',
+    width: 'auto',
+    margin: '0 auto',
+  } as const;
+
+  const renderPhoneField = (
+    label: string,
+    value: string,
+    onChange: (nextValue: string) => void,
+    placeholder?: string
+  ) => (
+    <label style={inputLabelStyle}>
+      {label}
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        style={inputStyle}
+      />
+    </label>
+  );
 
   const handlePlay = useCallback(() => {
     setPlaying(true);
@@ -202,14 +249,8 @@ export default function Home() {
           <button
             onClick={() => setSelectedComposition('preview')}
             style={{
-              padding: '10px 16px',
-              fontSize: '14px',
-              borderRadius: '8px',
-              border: '1px solid #475569',
+              ...tabButtonBaseStyle,
               backgroundColor: selectedComposition === 'preview' ? '#3b82f6' : 'transparent',
-              color: 'white',
-              cursor: 'pointer',
-              fontWeight: '600',
             }}
           >
             Preview Composition
@@ -217,14 +258,8 @@ export default function Home() {
           <button
             onClick={() => setSelectedComposition('phone')}
             style={{
-              padding: '10px 16px',
-              fontSize: '14px',
-              borderRadius: '8px',
-              border: '1px solid #475569',
+              ...tabButtonBaseStyle,
               backgroundColor: selectedComposition === 'phone' ? '#3b82f6' : 'transparent',
-              color: 'white',
-              cursor: 'pointer',
-              fontWeight: '600',
             }}
           >
             Phone Composition
@@ -259,111 +294,33 @@ export default function Home() {
               backgroundColor: '#0f172a',
             }}
           >
-            <label style={{ display: 'grid', gap: '6px', fontSize: '14px', color: '#cbd5e1' }}>
-              Event Name
-              <input
-                value={phoneProps.name}
-                onChange={(e) =>
-                  setPhoneProps((prev) => ({
-                    ...prev,
-                    name: e.target.value,
-                  }))
-                }
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  borderRadius: '6px',
-                  border: '1px solid #475569',
-                  backgroundColor: '#1e293b',
-                  color: 'white',
-                }}
-              />
-            </label>
-
-            <label style={{ display: 'grid', gap: '6px', fontSize: '14px', color: '#cbd5e1' }}>
-              Event Start DateTime (ISO)
-              <input
-                value={phoneProps.eventStartDateTime}
-                onChange={(e) =>
-                  setPhoneProps((prev) => ({
-                    ...prev,
-                    eventStartDateTime: e.target.value,
-                  }))
-                }
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  borderRadius: '6px',
-                  border: '1px solid #475569',
-                  backgroundColor: '#1e293b',
-                  color: 'white',
-                }}
-              />
-            </label>
-
-            <label style={{ display: 'grid', gap: '6px', fontSize: '14px', color: '#cbd5e1' }}>
-              Event End DateTime (ISO)
-              <input
-                value={phoneProps.eventEndDateTime}
-                onChange={(e) =>
-                  setPhoneProps((prev) => ({
-                    ...prev,
-                    eventEndDateTime: e.target.value,
-                  }))
-                }
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  borderRadius: '6px',
-                  border: '1px solid #475569',
-                  backgroundColor: '#1e293b',
-                  color: 'white',
-                }}
-              />
-            </label>
-
-            <label style={{ display: 'grid', gap: '6px', fontSize: '14px', color: '#cbd5e1' }}>
-              Video Creation DateTime (ISO, optional)
-              <input
-                value={phoneProps.videoCreationDateTime ?? ''}
-                onChange={(e) =>
-                  setPhoneProps((prev) => ({
-                    ...prev,
-                    videoCreationDateTime: e.target.value.trim() === '' ? null : e.target.value,
-                  }))
-                }
-                placeholder="Leave empty for null"
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  borderRadius: '6px',
-                  border: '1px solid #475569',
-                  backgroundColor: '#1e293b',
-                  color: 'white',
-                }}
-              />
-            </label>
-
-            <label style={{ display: 'grid', gap: '6px', fontSize: '14px', color: '#cbd5e1' }}>
-              Image URL
-              <input
-                value={phoneProps.imageUrl}
-                onChange={(e) =>
-                  setPhoneProps((prev) => ({
-                    ...prev,
-                    imageUrl: e.target.value,
-                  }))
-                }
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  borderRadius: '6px',
-                  border: '1px solid #475569',
-                  backgroundColor: '#1e293b',
-                  color: 'white',
-                }}
-              />
-            </label>
+            {renderPhoneField('Event Name', phoneProps.name, (name) =>
+              setPhoneProps((prev) => ({ ...prev, name }))
+            )}
+            {renderPhoneField(
+              'Event Start DateTime (ISO)',
+              phoneProps.eventStartDateTime,
+              (eventStartDateTime) => setPhoneProps((prev) => ({ ...prev, eventStartDateTime }))
+            )}
+            {renderPhoneField(
+              'Event End DateTime (ISO)',
+              phoneProps.eventEndDateTime,
+              (eventEndDateTime) => setPhoneProps((prev) => ({ ...prev, eventEndDateTime }))
+            )}
+            {renderPhoneField(
+              'Video Creation DateTime (ISO, optional)',
+              phoneProps.videoCreationDateTime ?? '',
+              (videoCreationDateTime) =>
+                setPhoneProps((prev) => ({
+                  ...prev,
+                  videoCreationDateTime:
+                    videoCreationDateTime.trim() === '' ? null : videoCreationDateTime,
+                })),
+              'Leave empty for null'
+            )}
+            {renderPhoneField('Image URL', phoneProps.imageUrl, (imageUrl) =>
+              setPhoneProps((prev) => ({ ...prev, imageUrl }))
+            )}
           </div>
         )}
 
@@ -378,12 +335,7 @@ export default function Home() {
                 compositionWidth={videoMetadata.width}
                 compositionHeight={videoMetadata.height}
                 fps={videoMetadata.fps}
-                style={{
-                  height: '80vh',
-                  maxHeight: '900px',
-                  width: 'auto',
-                  margin: '0 auto',
-                }}
+                style={playerStyle}
                 controls
                 loop
               />
@@ -396,12 +348,7 @@ export default function Home() {
                 compositionWidth={videoMetadata.width}
                 compositionHeight={videoMetadata.height}
                 fps={videoMetadata.fps}
-                style={{
-                  height: '80vh',
-                  maxHeight: '900px',
-                  width: 'auto',
-                  margin: '0 auto',
-                }}
+                style={playerStyle}
               />
             )
           ) : (
