@@ -125,8 +125,9 @@ npm run dev
 ### Version Management
 
 The package uses semantic versioning:
+
 - **Patch** (1.0.0 → 1.0.1): Bug fixes
-- **Minor** (1.0.0 → 1.1.0): New features, backward compatible  
+- **Minor** (1.0.0 → 1.1.0): New features, backward compatible
 - **Major** (1.0.0 → 2.0.0): Breaking changes
 
 ## 📋 Project Structure
@@ -165,7 +166,9 @@ Ensures Remotion packages are properly transpiled for Next.js.
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"],
-      "@getmoments/remotion-rendering": ["./node_modules/@getmoments/remotion-rendering/src/exports.ts"]
+      "@getmoments/remotion-rendering": [
+        "./node_modules/@getmoments/remotion-rendering/src/exports.ts"
+      ]
     }
   }
 }
@@ -205,7 +208,7 @@ For vertical video (portrait): Use `compositionWidth={1080}` and `compositionHei
   "dependencies": {
     "remotion": "4.0.404",
     "@remotion/player": "4.0.404",
-    "@remotion/fonts": "4.0.404",
+    "@remotion/fonts": "4.0.404"
     // ... all same version
   }
 }
@@ -237,6 +240,7 @@ npm list @getmoments/remotion-rendering
 ```
 
 Check that:
+
 1. `.env` file has correct `GITLAB_TOKEN`
 2. `.npmrc` is configured for GitLab registry
 3. Your GitLab token has `read_api` or `api` scope

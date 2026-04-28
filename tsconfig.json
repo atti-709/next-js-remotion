@@ -20,7 +20,9 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@getmoments/remotion-rendering": ["./node_modules/@getmoments/remotion-rendering/src/exports.ts"]
+      "@getmoments/remotion-rendering": [
+        "./node_modules/@getmoments/remotion-rendering/src/exports.ts"
+      ]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

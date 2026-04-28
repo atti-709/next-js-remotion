@@ -6,21 +6,46 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@getmoments/remotion-rendering": "^1.0.4",
-    "@remotion/fonts": "4.0.404",
-    "@remotion/layout-utils": "4.0.404",
-    "@remotion/motion-blur": "4.0.404",
-    "@remotion/player": "4.0.404",
-    "@remotion/transitions": "4.0.404",
+    "@remotion/fonts": "4.0.447",
+    "@remotion/layout-utils": "4.0.447",
+    "@remotion/motion-blur": "4.0.447",
+    "@remotion/player": "4.0.447",
+    "@remotion/transitions": "4.0.447",
     "mediabunny": "^1.28.0",
     "next": "^14.2.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "remotion": "4.0.404",
-    "zod": "^3.22.3"
+    "remotion": "4.0.447",
+    "zod": "4.3.6"
+  },
+  "overrides": {
+    "remotion": "4.0.447",
+    "@remotion/bundler": "4.0.447",
+    "@remotion/cli": "4.0.447",
+    "@remotion/fonts": "4.0.447",
+    "@remotion/layout-utils": "4.0.447",
+    "@remotion/licensing": "4.0.447",
+    "@remotion/media-parser": "4.0.447",
+    "@remotion/media-utils": "4.0.447",
+    "@remotion/motion-blur": "4.0.447",
+    "@remotion/paths": "4.0.447",
+    "@remotion/player": "4.0.447",
+    "@remotion/renderer": "4.0.447",
+    "@remotion/shapes": "4.0.447",
+    "@remotion/streaming": "4.0.447",
+    "@remotion/studio": "4.0.447",
+    "@remotion/studio-server": "4.0.447",
+    "@remotion/studio-shared": "4.0.447",
+    "@remotion/transitions": "4.0.447",
+    "@remotion/web-renderer": "4.0.447",
+    "@remotion/zod-types": "4.0.447",
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -28,6 +53,7 @@
     "@types/react-dom": "^18.3.0",
     "eslint": "^8.0.0",
     "eslint-config-next": "^14.2.0",
+    "prettier": "^3.8.3",
     "typescript": "^5.0.0"
   }
 }

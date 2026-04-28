@@ -2,7 +2,16 @@
 
 import { Player, PlayerRef } from '@remotion/player';
 import { useCallback, useState, useRef, useEffect } from 'react';
-import { DEFAULT_FPS, DEFAULT_IS_HORIZONTAL, defaultResolution, IntroComposition, OverlayPosition, PreviewComposition, sharedConstants } from '@getmoments/remotion-rendering';
+import {
+  DEFAULT_FPS,
+  DEFAULT_IS_HORIZONTAL,
+  defaultResolution,
+  IntroComposition,
+  OverlayPosition,
+  PhoneComposition,
+  PreviewComposition,
+  sharedConstants,
+} from '@getmoments/remotion-rendering';
 import { Input, ALL_FORMATS, BlobSource } from 'mediabunny';
 
 export default function Home() {
@@ -20,9 +29,11 @@ export default function Home() {
   const previewProps: any = {
     // Shared video URL
     // videoUrl: "https://remotion.media/video.mp4",
-    videoUrl: 'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/RockWerchter2025_vertical.mov',
+    videoUrl:
+      'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/RockWerchter2025_vertical.mov',
     videoStartFrame: 0,
-    transparentVideoUrl: 'https://s3.eu-central-1.wasabisys.com/getmoments-static/events/sziget/2025/intro/intro.webm',
+    transparentVideoUrl:
+      'https://s3.eu-central-1.wasabisys.com/getmoments-static/events/sziget/2025/intro/intro.webm',
 
     // INTRO props
     logoYOffsetPx: 0,
@@ -57,8 +68,7 @@ export default function Home() {
     overlayStartFrame: 0,
     overlayImageUrl:
       'https://s3.eu-central-1.wasabisys.com/getmoments-static/remotion_placeholders/rev-calling-watermark.png',
-    overlayImagePosition:
-      sharedConstants.OVERLAY_IMAGE_POSITION as OverlayPosition,
+    overlayImagePosition: sharedConstants.OVERLAY_IMAGE_POSITION as OverlayPosition,
     overlayImageScale: 1.0,
     overlayImageOpacity: sharedConstants.OVERLAY_IMAGE_OPACITY,
     overlayText: 'Atti',
@@ -66,10 +76,18 @@ export default function Home() {
     overlayFontWeight: sharedConstants.OVERLAY_FONT_WEIGHT,
     overlayFontSizePx: sharedConstants.OVERLAY_FONT_SIZE_PX,
     overlayFontColorHex: sharedConstants.OVERLAY_FONT_COLOR_HEX,
-    overlayTextPosition:
-      sharedConstants.OVERLAY_TEXT_POSITION as OverlayPosition,
+    overlayTextPosition: sharedConstants.OVERLAY_TEXT_POSITION as OverlayPosition,
     overlayTextPaddingPx: sharedConstants.OVERLAY_TEXT_PADDING_PX,
     overlayTextOpacity: sharedConstants.OVERLAY_TEXT_OPACITY,
+  };
+
+  const phoneProps = {
+    name: 'Scream Challenge',
+    eventStartDateTime: '2026-07-01T10:00:00.000Z',
+    eventEndDateTime: '2026-07-31T23:59:59.999Z',
+    videoCreationDateTime: null,
+    imageUrl:
+      'https://getmoments-static.s3.eu-central-1.wasabisys.com/remotion_placeholders/logo_samples/backstage%20logaArtboard%201_6.jpg',
   };
 
   useEffect(() => {
@@ -88,30 +106,30 @@ export default function Home() {
 
         const durationInSeconds = await input.computeDuration();
         const videoTrack = await input.getPrimaryVideoTrack();
-        
+
         if (durationInSeconds && videoTrack) {
           const { displayWidth, displayHeight } = videoTrack;
-          
+
           // Derive FPS from packet stats
           const packetStats = await videoTrack.computePacketStats(50);
           const fps = packetStats?.averagePacketRate ?? null;
-          
+
           console.log('Video metadata:', { displayWidth, displayHeight, fps, durationInSeconds });
-          
+
           if (fps === null) {
             setFpsError('Unable to determine FPS from video');
             return;
           }
-          
+
           // Check if FPS is DEFAULT_FPS
           if (Math.abs(fps - DEFAULT_FPS) > 0.1) {
             setFpsError(`Video FPS is ${fps.toFixed(2)}. Only ${DEFAULT_FPS} FPS is supported.`);
           } else {
             setFpsError(null);
           }
-          
+
           const durationInFrames = Math.round(durationInSeconds * fps);
-          
+
           setVideoMetadata({
             durationInFrames,
             width: displayWidth,
@@ -176,58 +194,56 @@ export default function Home() {
           boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
         }}
       >
-        <h2 style={{ fontSize: '24px', marginBottom: '24px' }}>
-          PreviewComposition
-        </h2>
-        
+        <h2 style={{ fontSize: '24px', marginBottom: '24px' }}>PreviewComposition</h2>
+
         {fpsError && (
-          <div style={{
-            padding: '16px',
-            marginBottom: '20px',
-            backgroundColor: '#dc2626',
-            color: 'white',
-            borderRadius: '8px',
-            fontSize: '16px',
-            fontWeight: '500',
-          }}>
+          <div
+            style={{
+              padding: '16px',
+              marginBottom: '20px',
+              backgroundColor: '#dc2626',
+              color: 'white',
+              borderRadius: '8px',
+              fontSize: '16px',
+              fontWeight: '500',
+            }}
+          >
             ⚠️ {fpsError}
           </div>
         )}
-        
-          <div style={{ marginBottom: '20px' }}>
-            {isMounted && videoMetadata ? (
-              <Player
-                ref={playerRef}
-                component={PreviewComposition}
-                inputProps={previewProps}
-                durationInFrames={videoMetadata.durationInFrames}
-                compositionWidth={videoMetadata.width}
-                compositionHeight={videoMetadata.height}
-                fps={videoMetadata.fps}
-                style={{
-                  height: '80vh',
-                  maxHeight: '900px',
-                  width: 'auto',
-                  margin: '0 auto',
-                }}
-                controls
-                loop
-              />
-            ) : (
-              <div style={{ 
-                padding: '40px', 
+
+        <div style={{ marginBottom: '20px' }}>
+          {isMounted && videoMetadata ? (
+            <Player
+              ref={playerRef}
+              component={PhoneComposition}
+              inputProps={phoneProps}
+              durationInFrames={1}
+              compositionWidth={videoMetadata.width}
+              compositionHeight={videoMetadata.height}
+              fps={videoMetadata.fps}
+              style={{
+                height: '80vh',
+                maxHeight: '900px',
+                width: 'auto',
+                margin: '0 auto',
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                padding: '40px',
                 textAlign: 'center',
-                opacity: 0.7 
-              }}>
-                Loading video metadata...
-              </div>
-            )}
-          </div>
+                opacity: 0.7,
+              }}
+            >
+              Loading video metadata...
+            </div>
+          )}
+        </div>
 
         <div style={{ marginTop: '24px' }}>
-          <h3 style={{ fontSize: '18px', marginBottom: '12px' }}>
-            Player Controls
-          </h3>
+          <h3 style={{ fontSize: '18px', marginBottom: '12px' }}>Player Controls</h3>
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <button
               onClick={handlePlay}
@@ -301,13 +317,11 @@ export default function Home() {
           borderRadius: '8px',
         }}
       >
-        <h3 style={{ fontSize: '20px', marginBottom: '12px' }}>
-          ✅ Success!
-        </h3>
+        <h3 style={{ fontSize: '20px', marginBottom: '12px' }}>✅ Success!</h3>
         <p style={{ lineHeight: '1.8', opacity: 0.9 }}>
           Your PreviewComposition is now loaded from the @getmoments/remotion-rendering repository
-          and displaying in the Remotion Player. You can add more compositions by
-          importing them from &apos;@getmoments/remotion-rendering&apos; and adding more Player components.
+          and displaying in the Remotion Player. You can add more compositions by importing them
+          from &apos;@getmoments/remotion-rendering&apos; and adding more Player components.
         </p>
       </div>
     </main>
